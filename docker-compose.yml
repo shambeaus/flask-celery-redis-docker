@@ -1,0 +1,37 @@
+version: '2'
+ 
+services:
+  app:
+    restart: always
+    build:
+      context:  ./app
+      dockerfile: Dockerfile
+    command: gunicorn --bind 0.0.0.0:8080 wsgi:app
+    expose:
+      - "8080"
+    links:
+      - redis
+    volumes:
+      - './app:/app'
+  proxy:
+    restart: always
+    build:
+      context:  ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    links:
+      - app
+  redis:
+    restart: always
+    build:
+      context:  ./redis
+      dockerfile: Dockerfile
+    expose:
+      - "6379"
+  celery:
+    build: ./app
+    user: nobody
+    command: celery worker -A task.celery --loglevel=info
+    volumes:
+      - './app:/app'
