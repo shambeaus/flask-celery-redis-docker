@@ -23,6 +23,7 @@ app.config.update(
     CELERY_RESULT_BACKEND='redis://redis:6379/0'
 )
 
+
 celery = make_celery(app)
 
 @celery.task(bind=True)
