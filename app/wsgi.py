@@ -1,6 +1,6 @@
 from app import app
-import task
 import routes
+import task
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
