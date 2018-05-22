@@ -1,6 +1,6 @@
-from celery import Celery
-from flask import Flask
+from app import app
 import time
+from celery import Celery
 
 def make_celery(app):
     celery = Celery(
@@ -18,15 +18,13 @@ def make_celery(app):
     celery.Task = ContextTask
     return celery
 
-
-app1 = Flask(__name__)
-
-app1.config.update(
+app.config.update(
     CELERY_BROKER_URL='redis://redis:6379/0',
     CELERY_RESULT_BACKEND='redis://redis:6379/0'
 )
 
-celery = make_celery(app1)
+
+celery = make_celery(app)
 
 @celery.task(bind=True)
 def long_task(self):
